@@ -112,10 +112,8 @@ def largest_earnings_per_day(filename: str) -> Optional[Client]:
     with open(filename, "r") as file:
         # read file
         lines = file.readlines()
+        earnings = []
         for line in lines:
-
-            print(line)
-            print("*"*50)
             #Find the client that has earned the most money per day.
             #If two people have earned the same amount of money per day, then return the one that has earned it in less time.
             #If no-one has earned money (everyone has less or equal to wat they started with), then return None.
@@ -126,35 +124,33 @@ def largest_earnings_per_day(filename: str) -> Optional[Client]:
             current_amount = int(line.split(",")[4])
             money_per_day = (current_amount - starting_amount) / account_age
 
-            earnings = []
-            #Find the client that has earned the most money per day.
-            if current_amount > starting_amount:
-                #add an array to earnings list with the name of the client and the earnings per day and the account age
-                earnings += ([name, money_per_day, account_age])
-            # if len(earnings) == 0:
-            #     return None
+            earnings.append([name, money_per_day, account_age])
 
-            #If two people have earned the same amount of money per day, then return the one that has earned it in less time.
+        #sort earnings list by money_per_day
+        earnings.sort(key=lambda x: x[1], reverse=True)
 
-            print (earnings)
-
+        #if money_per_day is 0 or less for everyone, return None
+        for earning in earnings:
+            if earning[1] <= 0:
+                #delete the element from the list
+                earnings.remove(earning)
+        if len(earnings) == 0:
+            return None
+        #keep the element with the highest money_per_day, if there are two or more, keep the one with the lowest account_age
+        else:
             for earning in earnings:
-                name = earning[0]
-                money_per_day = earning[1]
-                account_age = earning[2]
-                temp_array = []
-                if len(temp_array) == 0:
-                    temp_array.append([name, money_per_day, account_age])
-                else:
-                    if money_per_day > temp_array[0][1]:
-                        temp_array[0] = [name, money_per_day, account_age]
-                    elif money_per_day == temp_array[0][1]:
-                        if account_age < temp_array[0][2]:
-                            temp_array[0] = [name, money_per_day, account_age]
-                
+                if earning[1] < earnings[0][1]:
+                    #delete the element from the list
+                    earnings.remove(earning)
+            if len(earnings) == 1:
+                return earnings[0][0]
+            else:
+                for earning in earnings:
+                    if earning[2] > earnings[0][2]:
+                        #delete the element from the list
+                        earnings.remove(earning)
+                return earnings[0][0]
 
-            #Return only the clients name that says "Highest earnings per day:" at the start
-            return "Highest earnings per day: " + temp_array[0][0]   
     pass
 
 
@@ -167,11 +163,52 @@ def largest_loss_per_day(filename: str) -> Optional[Client]:
     :param filename: name of file to get info from.
     :return: client with largest loss.
     """
+    with open(filename, "r") as file:
+        # read file
+        lines = file.readlines()
+        losses = []
+        for line in lines:
+            #Find the client that has lost the most money per day.
+            #If two people have lost the same amount of money per day, then return the one that has lost it in less time.
+            #If everyone has earned money (everyone has more or equal to what they started with), then return None.
+
+            name = line.split(",")[0]
+            account_age = int(line.split(",")[2])
+            starting_amount = int(line.split(",")[3])
+            current_amount = int(line.split(",")[4])
+            money_per_day = (current_amount - starting_amount) / account_age
+
+            losses.append([name, money_per_day, account_age])
+
+        #sort losses list by money_per_day
+        losses.sort(key=lambda x: x[1], reverse=False)
+
+        #if money_per_day is 0 or more for everyone, return None
+        for loss in losses:
+            if loss[1] >= 0:
+                #delete the element from the list
+                losses.remove(loss)
+        if len(losses) == 0:
+            return None
+        #keep the element with the lowest money_per_day, if there are two or more, keep the one with the lowest account_age
+        else:
+            for loss in losses:
+                if loss[1] > losses[0][1]:
+                    #delete the element from the list
+                    losses.remove(loss)
+            if len(losses) == 1:
+                return losses[0][0]
+            else:
+                for loss in losses:
+                    if loss[2] > losses[0][2]:
+                        #delete the element from the list
+                        losses.remove(loss)
+                return losses[0][0]
     pass
 
 
 if __name__ == '__main__':
-    print(read_from_file_into_list("clients_info.txt"))  # -> [Ann, Mark, Josh, Jonah, Franz]
-    print(filter_by_bank("clients_info.txt", "Sprint"))  # -> [Ann, Mark]
-    print(largest_earnings_per_day("clients_info.txt"))  # -> Josh
-    print(largest_loss_per_day("clients_info.txt"))  # -> Franz
+    print(read_from_file_into_list("negative_test.txt"))  # -> [Ann, Mark, Josh, Jonah, Franz]
+    print(filter_by_bank("negative_test.txt", "Sprint"))  # -> [Ann, Mark]
+    print(largest_earnings_per_day("negative_test.txt"))  # -> Josh
+    print(largest_loss_per_day("negative_test.txt"))  # -> Franz

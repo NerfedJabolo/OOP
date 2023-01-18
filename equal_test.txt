@@ -1,0 +1,8 @@
+Jonah,Luminor,100,0,10000
+Josh,Chase,5,1500,2000
+Ben,Swedbank,20,200,2200
+Benjamin,Sprint,200,2000,22000
+Franz,Swedbank,200,2000,1000
+Anna,Nothing,5000,27500,2500
+Duke,Chase,150,1500,750
+Ferdinand,Nordea,500,2750,250
